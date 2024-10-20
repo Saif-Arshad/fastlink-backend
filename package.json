@@ -1,14 +1,14 @@
 {
-  "name": "rjb",
+  "name": "Dashboard",
   "version": "1.0.0",
-  "description": "Rjb",
+  "description": "Dashboard",
   "main": "app.js",
   "type": "commonjs",
   "scripts": {
     "dev": "nodemon src/app.js",
     "start": "node src/app.js"
   },
-  "author": "Usman Asif",
+  "author": "Saif Ur Rehman",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
