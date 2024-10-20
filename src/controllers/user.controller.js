@@ -55,7 +55,6 @@ async function signAdminOut(req, res) {
 async function createAdminUser(req, res) {
   try {
     const sanitizedBody = sanitizeObject(req.body);
-    console.log("🚀 ~ createAdminUser ~ sanitizedBody:", sanitizedBody);
 
     const isUserExist = await User.findOne({ email: sanitizedBody.email });
     if (isUserExist) {
@@ -110,20 +109,7 @@ async function getAllUsers(req, res) {
     return handleError(res, 500, "Server error");
   }
 }
-async function getUsers(req, res) {
-  try {
-    const users = await User.find({ type: 'user' });
 
-
-    if (!users.length) {
-      return res.error({ message: "No users found", status: 404 });
-    }
-    return res.success({ users });
-  } catch (err) {
-    console.error("Error fetching users:", err);
-    return handleError(res, 500, "Server error");
-  }
-}
 
 // Retrieve User by ID
 async function getUserById(req, res) {
@@ -189,7 +175,6 @@ module.exports = {
   createAdminUser,
   getAllUsers,
   getUserById,
-  getUsers,
   updateUserById,
   deleteUserById,
 };

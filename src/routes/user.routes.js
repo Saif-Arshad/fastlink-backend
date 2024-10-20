@@ -6,7 +6,6 @@ const {
   createAdminUser,
   protectedAdmin,
   getAllUsers,
-  getUsers,
   getUserById,
   updateUserById,
   deleteUserById,
@@ -25,7 +24,6 @@ router.post("/", createAdminUser);
 
 // Retrieve all users
 router.get("/", verifyUserToken, adminOnly, getAllUsers);
-router.get("/getUsers", verifyUserToken, adminOnly, getUsers);
 
 // Retrieve user by ID
 router.get("/:id", verifyUserToken, adminOnly, getUserById);

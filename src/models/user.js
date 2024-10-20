@@ -6,7 +6,6 @@ const UserSchema = new mongoose.Schema(
       type: String,
       unique: true,
       required: true,
-      // validate the email format
       validate: {
         validator: function (v) {
           return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v);
@@ -22,11 +21,20 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    signature: {
+      type: String,
+      required: true
+    },
+    invitedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: false
+    },
     type: {
       type: String,
-      enum: ["admin", "user"],
+      enum: ["admin", "employee"],
       required: true,
-      default: "user",
+      default: "employee",
     },
   },
   {
@@ -42,7 +50,7 @@ const userTokenSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // This will add `createdAt` and `updatedAt` fields automatically
+    timestamps: true,
   }
 );
 
