@@ -8,6 +8,7 @@ const {
   getAllUsers,
   getUserById,
   updateUserById,
+  inviteUser,
   deleteUserById,
 } = require("../controllers/user.controller"); // Adjust the path as needed
 const { verifyUserToken } = require("../middlewares/jwt");
@@ -24,6 +25,7 @@ router.post("/", createAdminUser);
 
 // Retrieve all users
 router.get("/", verifyUserToken, adminOnly, getAllUsers);
+router.post("/invite", verifyUserToken, adminOnly, inviteUser);
 
 // Retrieve user by ID
 router.get("/:id", verifyUserToken, adminOnly, getUserById);
