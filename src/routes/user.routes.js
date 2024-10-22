@@ -7,6 +7,7 @@ const {
   protectedAdmin,
   getAllUsers,
   getUserById,
+  authenticateAdmin,
   updateUserById,
   inviteUser,
   deleteUserById,
@@ -22,6 +23,7 @@ router.post("/sign-out", verifyUserToken, signAdminOut);
 
 // Route to create a new admin user
 router.post("/", createAdminUser);
+router.post("/authenticate", authenticateAdmin);
 
 // Retrieve all users
 router.get("/", verifyUserToken, adminOnly, getAllUsers);

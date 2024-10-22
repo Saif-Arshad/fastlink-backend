@@ -34,8 +34,8 @@ const UserSchema = new mongoose.Schema(
       type: String,
       enum: ["admin", "employee"],
       required: true,
-      // default: "admin",
-      default: "employee",
+      default: "admin",
+      // default: "employee",
     },
   },
   {

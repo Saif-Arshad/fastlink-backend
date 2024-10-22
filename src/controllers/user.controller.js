@@ -257,6 +257,28 @@ async function protectedAdmin(req, res) {
 
 }
 
+async function authenticateAdmin(req, res) {
+  const { id } = req.body
+  try {
+
+
+    const isAdmin = await User.findOne({ _id: id, type: "admin" })
+
+    if (!isAdmin) {
+
+      return handleError(res, 404, 'Admin not Found');
+    }
+    return res.json({
+      success: true,
+      message: "User is Authenticated"
+    })
+  } catch (error) {
+    return handleError(res, 500, error.message);
+
+  }
+
+}
+
 module.exports = {
   protectedAdmin,
   signAdminIn,
@@ -264,6 +286,7 @@ module.exports = {
   createAdminUser,
   getAllUsers,
   inviteUser,
+  authenticateAdmin,
   getUserById,
   updateUserById,
   deleteUserById,
