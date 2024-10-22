@@ -37,6 +37,11 @@ const UserSchema = new mongoose.Schema(
       default: "admin",
       // default: "employee",
     },
+    tasks: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Task',
+      required: false
+    }
   },
   {
     timestamps: true,
