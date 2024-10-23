@@ -21,10 +21,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    signature: {
-      type: String,
-      required: true
-    },
+    // signature: {
+    //   type: String,
+    //   required: true
+    // },
     invitedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
