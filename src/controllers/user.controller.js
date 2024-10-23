@@ -24,6 +24,8 @@ const handleError = (res, statusCode, message) => {
 async function signAdminIn(req, res) {
   try {
     const { email, password } = req.body;
+    console.log("🚀 ~ signAdminIn ~ password:", password)
+    console.log("🚀 ~ signAdminIn ~ email:", email)
     if (!email || !password) {
       return handleError(res, 400, "Email and password are required");
     }
@@ -65,15 +67,19 @@ async function signAdminOut(req, res) {
 async function createAdminUser(req, res) {
   try {
     const sanitizedBody = sanitizeObject(req.body);
+    console.log("🚀 ~ createAdminUser ~ sanitizedBody:", sanitizedBody)
 
     const isUserExist = await User.findOne({ email: sanitizedBody.email });
     if (isUserExist) {
       return handleError(res, 400, "User with this Email already exists");
     }
     const salt = await bcrypt.genSalt();
-    sanitizedBody.password = await bcrypt.hash(sanitizedBody.password, salt);
+    const hashPassword = await bcrypt.hash(sanitizedBody.encryptedPassword ? sanitizedBody.encryptedPassword : sanitizedBody.password, salt);
 
-    const user = await User.create(sanitizedBody);
+    const user = await User.create({
+      ...sanitizedBody,
+      password: hashPassword
+    });
     return res.success({ new_admin_user: user });
   } catch (err) {
     console.error(err);
