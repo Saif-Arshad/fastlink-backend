@@ -19,7 +19,7 @@ const { adminOnly } = require("../middlewares/admin");
 router.post("/sign-in", signAdminIn);
 
 // Route to sign out an admin
-router.post("/sign-out", verifyUserToken, signAdminOut);
+router.post("/sign-out", signAdminOut);
 
 // Route to create a new admin user
 router.post("/", createAdminUser);

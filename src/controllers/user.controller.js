@@ -20,29 +20,50 @@ const handleError = (res, statusCode, message) => {
   return res.error({ status: statusCode, message });
 };
 
-// Sign In Admin
 async function signAdminIn(req, res) {
   try {
     const { email, password } = req.body;
-    console.log("🚀 ~ signAdminIn ~ password:", password)
-    console.log("🚀 ~ signAdminIn ~ email:", email)
+
     if (!email || !password) {
       return handleError(res, 400, "Email and password are required");
     }
-    console.log("🚀 ~ signAdminIn ~ password:", password);
-    console.log("🚀 ~ signAdminIn ~ email:", email);
 
     const adminUser = await User.findOne({ email });
-    console.log("🚀 ~ signAdminIn ~ adminUser:", adminUser);
     if (!adminUser) {
       return handleError(res, 401, "Incorrect credentials");
     }
+
     const isMatch = await bcrypt.compare(password, adminUser.password);
     if (isMatch) {
+      if (adminUser.type === "employee") {
+        const today = new Date();
+        const hasLoggedInToday = adminUser.timeSchedule.some((timestamp) => {
+          const loginDate = new Date(timestamp.login);
+          return (
+            loginDate.getDate() === today.getDate() &&
+            loginDate.getMonth() === today.getMonth() &&
+            loginDate.getFullYear() === today.getFullYear()
+          );
+        });
+
+        if (hasLoggedInToday) {
+          return handleError(res, 403, "Employees can only sign in once per day.");
+        }
+      }
+
       const token = jwt.sign({ id: adminUser._id }, process.env.SECRET, {
         expiresIn: "15d",
       });
       await UserToken.create({ token });
+
+      const currentTimestamp = {
+        login: new Date(),
+        logOut: null,
+      };
+      adminUser.timeSchedule.push(currentTimestamp);
+
+      await adminUser.save();
+
       return res.success({ token, user: adminUser });
     }
 
@@ -52,16 +73,39 @@ async function signAdminIn(req, res) {
   }
 }
 
-// Sign Out Admin
+
+
+
 async function signAdminOut(req, res) {
   try {
-    await UserToken.deleteOne({ token: req.token });
+    const { id: userId } = req.body;
+    console.log("🚀 ~ signAdminOut ~ userId:", userId)
+
+    if (!userId) {
+      return handleError(res, 400, "User ID is required");
+    }
+
+
+    const user = await User.findById(userId);
+    console.log("🚀 ~ signAdminOut ~ user:", user)
+
+    if (user) {
+      const lastLoginEntry = user.timeSchedule[user.timeSchedule.length - 1];
+      if (lastLoginEntry && !lastLoginEntry.logOut) {
+        lastLoginEntry.logOut = new Date();
+      }
+
+      await user.save();
+    }
+
     return res.success({ message: "Logged out successfully" });
   } catch (err) {
     console.error(err);
     return handleError(res, 500, err.message);
   }
 }
+
+
 
 // Create Admin User
 async function createAdminUser(req, res) {
@@ -127,17 +171,41 @@ async function getAllUsers(req, res) {
 }
 
 
-// Retrieve User by ID
 async function getUserById(req, res) {
   try {
-    const { id } = req.params;
-    const user = await User.findById(id);
+    // Parse pagination parameters from the query
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const userId = req.params.id; // Use req.params.id to access user ID from URL parameter
+
+    // Find the user by ID and select only the timeSchedule field
+    const user = await User.findById(userId).select("timeSchedule");
+
     if (!user) {
-      return handleError(res, 404, "User not found");
+      return res.error({ message: "User not found", status: 404 });
     }
-    return res.success({ user });
+
+    // Pagination calculations
+    const totalEntries = user.timeSchedule.length;
+    const startIndex = (page - 1) * limit;
+    const endIndex = Math.min(startIndex + limit, totalEntries);
+
+    // Slice the timestamps for the current page
+    const paginatedTimestamps = user.timeSchedule.slice(startIndex, endIndex);
+
+    // Meta information for pagination
+    const meta = {
+      currentPage: page,
+      pageItems: paginatedTimestamps.length,
+      totalItems: totalEntries,
+      totalPages: Math.ceil(totalEntries / limit),
+    };
+
+    // Return the paginated timestamps with meta information
+    return res.success({ timestamps: paginatedTimestamps }, meta);
   } catch (err) {
-    return handleError(res, 500, err.message);
+    console.error("Error fetching user timestamps:", err); // Log error details for debugging
+    return handleError(res, 500, "Server error");
   }
 }
 

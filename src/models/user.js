@@ -21,34 +21,41 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // signature: {
-    //   type: String,
-    //   required: true
-    // },
     invitedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: false
+      ref: "User",
+      required: false,
     },
     type: {
       type: String,
       enum: ["admin", "employee"],
       required: true,
-      default: "admin",
-      // default: "employee",
+      default: "employee",
     },
     tasks: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Task',
-      required: false
-    }
+      ref: "Task",
+      required: false,
+    },
+    timeSchedule: [
+      {
+        login: {
+          type: Date,
+          required: false,
+        },
+        logOut: {
+          type: Date,
+          required: false,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
   }
 );
 
-const userTokenSchema = new mongoose.Schema(
+const UserTokenSchema = new mongoose.Schema(
   {
     token: {
       type: String,
@@ -61,7 +68,6 @@ const userTokenSchema = new mongoose.Schema(
 );
 
 const User = mongoose.model("User", UserSchema);
-const UserToken = mongoose.model("UserToken", userTokenSchema);
+const UserToken = mongoose.model("UserToken", UserTokenSchema);
 
-module.exports = {};
 module.exports = { User, UserToken };
