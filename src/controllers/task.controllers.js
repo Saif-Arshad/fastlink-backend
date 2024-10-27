@@ -1,27 +1,47 @@
-const Task = require('../models/task');
-
+const { Task } = require("../models/task")
 exports.createTask = async (req, res) => {
     try {
-        const { task, userId, assignedBy, dueDate } = req.body;
+        const assignedBy = req.user.id
+        console.log("🚀 ~ exports.createTask= ~ assignedBy:", assignedBy)
+        const { task, userIds, dueDate, title, priority } = req.body;
+        // console.log("🚀 ~ exports.createTask= ~ dueDate:", dueDate)
+        // console.log("🚀 ~ exports.createTask= ~ assignedBy:", assignedBy)
+        // console.log("🚀 ~ exports.createTask= ~ userIds:", userIds)
+        // console.log("🚀 ~ exports.createTask= ~ task:", task)
 
         const newTask = new Task({
             task,
-            userId,
+            userIds,
             assignedBy,
-            dueDate
+            dueDate,
+            title,
+            priority
         });
 
         await newTask.save();
         res.status(201).json({ message: 'Task created successfully', task: newTask });
     } catch (error) {
+        console.log("🚀 ~ exports.createTask= ~ error:", error)
         res.status(500).json({ message: 'Failed to create task', error });
     }
 };
-
 exports.getUserTasks = async (req, res) => {
     try {
         const { userId } = req.params;
-        const tasks = await Task.find({ userId }).populate('userId').populate('assignedBy');
+        const tasks = await Task.find({ userIds: userId })
+            .populate('userIds')  // Populate userIds array
+            .populate('assignedBy');
+
+        res.status(200).json(tasks);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to get tasks', error });
+    }
+};
+exports.getAllTasks = async (req, res) => {
+    try {
+        const tasks = await Task.find()
+            .populate('userIds')
+            .populate('assignedBy');
 
         res.status(200).json(tasks);
     } catch (error) {

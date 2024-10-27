@@ -10,6 +10,7 @@ const {
   authenticateAdmin,
   updateUserById,
   inviteUser,
+  getUsers,
   deleteUserById,
 } = require("../controllers/user.controller"); // Adjust the path as needed
 const { verifyUserToken } = require("../middlewares/jwt");
@@ -30,6 +31,7 @@ router.get("/", verifyUserToken, adminOnly, getAllUsers);
 router.post("/invite", verifyUserToken, adminOnly, inviteUser);
 
 // Retrieve user by ID
+router.get("/user-without-pagination", verifyUserToken, adminOnly, getUsers);
 router.get("/:id", verifyUserToken, adminOnly, getUserById);
 
 // Update user by ID

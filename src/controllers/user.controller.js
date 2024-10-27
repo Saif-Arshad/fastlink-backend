@@ -170,6 +170,19 @@ async function getAllUsers(req, res) {
   }
 }
 
+async function getUsers(req, res) {
+  try {
+    const users = await User.find({ type: "employee" });
+
+    if (!users.length) {
+      return res.error({ message: "No users found", status: 404 });
+    }
+    return res.success({ users });
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    return handleError(res, 500, "Server error");
+  }
+}
 
 async function getUserById(req, res) {
   try {
@@ -204,7 +217,7 @@ async function getUserById(req, res) {
     // Return the paginated timestamps with meta information
     return res.success({ timestamps: paginatedTimestamps }, meta);
   } catch (err) {
-    console.error("Error fetching user timestamps:", err); // Log error details for debugging
+    console.error("Error fetching user timestamps for user:", err); // Log error details for debugging
     return handleError(res, 500, "Server error");
   }
 }
@@ -359,6 +372,7 @@ module.exports = {
   signAdminOut,
   createAdminUser,
   getAllUsers,
+  getUsers,
   inviteUser,
   authenticateAdmin,
   getUserById,
