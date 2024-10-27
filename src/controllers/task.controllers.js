@@ -27,9 +27,9 @@ exports.createTask = async (req, res) => {
 };
 exports.getUserTasks = async (req, res) => {
     try {
-        const { userId } = req.params;
+        const userId = req.user.id
         const tasks = await Task.find({ userIds: userId })
-            .populate('userIds')  // Populate userIds array
+            .populate('userIds')
             .populate('assignedBy');
 
         res.status(200).json(tasks);
