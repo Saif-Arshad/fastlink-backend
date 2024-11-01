@@ -27,7 +27,7 @@ router.post("/", createAdminUser);
 router.post("/authenticate", authenticateAdmin);
 
 // Retrieve all users
-router.get("/", verifyUserToken, adminOnly, getAllUsers);
+router.get("/", verifyUserToken, getAllUsers);
 router.post("/invite", verifyUserToken, adminOnly, inviteUser);
 
 // Retrieve user by ID
