@@ -21,6 +21,10 @@ const taskSchema = new mongoose.Schema({
         type: Date,
         require: true,
     },
+    fileUrl: {
+        type: String,
+        required: false
+    },
     priority: {
         type: String,
         required: true,

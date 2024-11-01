@@ -4,11 +4,13 @@ const testRuleRouter = require("./test.routes.js");
 const userRouter = require("./user.routes.js");
 const meRouter = require("./me.routes")
 const taskRouter = require("./task.routes.js")
-const statsRouter = require("./stats.routes.js")
+const statsRouter = require("./stats.routes.js");
+const uploadRouter = require("./upload.routes.js")
 router.use("/test", testRuleRouter);
 router.use("/users", userRouter);
 router.use("/me", meRouter);
+router.use("/file", uploadRouter);
 router.use("/tasks", taskRouter);
-router.use("/stats",statsRouter)
+router.use("/stats", statsRouter)
 module.exports = router;
 

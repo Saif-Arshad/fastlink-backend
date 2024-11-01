@@ -3,7 +3,7 @@ exports.createTask = async (req, res) => {
     try {
         const assignedBy = req.user.id
         console.log("🚀 ~ exports.createTask= ~ assignedBy:", assignedBy)
-        const { task, userIds, dueDate, title, priority } = req.body;
+        const { task, userIds, dueDate, title, priority, fileUrl } = req.body;
         // console.log("🚀 ~ exports.createTask= ~ dueDate:", dueDate)
         // console.log("🚀 ~ exports.createTask= ~ assignedBy:", assignedBy)
         // console.log("🚀 ~ exports.createTask= ~ userIds:", userIds)
@@ -15,6 +15,7 @@ exports.createTask = async (req, res) => {
             assignedBy,
             dueDate,
             title,
+            fileUrl,
             priority
         });
 

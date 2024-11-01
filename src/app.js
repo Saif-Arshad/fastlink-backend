@@ -5,20 +5,25 @@ const http = require("http");
 require("dotenv").config();
 const { connectToDatabase } = require("../config/database.js");
 const routes = require("./routes");
+const fileUpload = require('express-fileupload');
 
 (async () => {
   connectToDatabase();
-
+  
   const allowedOrigins = "*";
   const corsOptionsAll = {
     optionsSuccessStatus: 202,
     origin: allowedOrigins,
     credentials: true,
   };
-
+  
   const app = express();
   const server = http.createServer(app);
-
+  
+  app.use(fileUpload({
+    useTempFiles: true,
+    tempFileDir: '/tmp/'
+  }));
   app.use(cors(corsOptionsAll));
   app.use(express.json({ limit: "10mb" }));
   app.use(logger("dev"));
