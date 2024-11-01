@@ -11,6 +11,8 @@ const {
   updateUserById,
   inviteUser,
   getUsers,
+  checkOut,
+  checkIn,
   deleteUserById,
 } = require("../controllers/user.controller"); // Adjust the path as needed
 const { verifyUserToken } = require("../middlewares/jwt");
@@ -29,7 +31,8 @@ router.post("/authenticate", authenticateAdmin);
 // Retrieve all users
 router.get("/", verifyUserToken, getAllUsers);
 router.post("/invite", verifyUserToken, adminOnly, inviteUser);
-
+router.post('/check-in', verifyUserToken, checkIn);
+router.post('/check-out', verifyUserToken, checkOut);
 // Retrieve user by ID
 router.get("/user-without-pagination", verifyUserToken, adminOnly, getUsers);
 router.get("/:id", verifyUserToken, adminOnly, getUserById);

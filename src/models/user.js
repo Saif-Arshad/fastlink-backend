@@ -39,11 +39,11 @@ const UserSchema = new mongoose.Schema(
     },
     timeSchedule: [
       {
-        login: {
+        sign_in: {
           type: Date,
           required: false,
         },
-        logOut: {
+        sign_out: {
           type: Date,
           required: false,
         },

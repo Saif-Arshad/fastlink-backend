@@ -20,6 +20,67 @@ const handleError = (res, statusCode, message) => {
   return res.error({ status: statusCode, message });
 };
 
+const checkIn = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send('User not found');
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Check if user has already checked in today
+    const hasCheckedInToday = user.timeSchedule.some(
+      entry => entry.sign_in && entry.sign_in.toDateString() === today.toDateString()
+    );
+
+    if (hasCheckedInToday) {
+      return res.status(400).send('User has already checked in today');
+    }
+
+    // Add new check-in
+    const checkInEntry = {
+      sign_in: new Date() // Records current time as check-in time
+    };
+    user.timeSchedule.push(checkInEntry);
+    await user.save();
+
+    res.status(200).json({ message: 'Check-in recorded', time: checkInEntry.sign_in });
+  } catch (error) {
+    console.error('Check-In Error:', error);
+    res.status(500).send('Error checking in');
+  }
+};
+
+// Check-Out
+const checkOut = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send('User not found');
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Find today's check-in to record check-out
+    const todayEntry = user.timeSchedule.find(
+      entry => entry.sign_in && entry.sign_in.toDateString() === today.toDateString()
+    );
+
+    if (!todayEntry || todayEntry.sign_out) {
+      return res.status(400).send('No check-in today or already checked out');
+    }
+
+    // Record check-out time
+    todayEntry.sign_out = new Date();
+    await user.save();
+
+    res.status(200).json({ message: 'Check-out recorded', time: todayEntry.sign_out });
+  } catch (error) {
+    console.error('Check-Out Error:', error);
+    res.status(500).send('Error checking out');
+  }
+};
 async function signAdminIn(req, res) {
   try {
     const { email, password } = req.body;
@@ -35,32 +96,11 @@ async function signAdminIn(req, res) {
 
     const isMatch = await bcrypt.compare(password, adminUser.password);
     if (isMatch) {
-      if (adminUser.type === "employee") {
-        const today = new Date();
-        const hasLoggedInToday = adminUser.timeSchedule.some((timestamp) => {
-          const loginDate = new Date(timestamp.login);
-          return (
-            loginDate.getDate() === today.getDate() &&
-            loginDate.getMonth() === today.getMonth() &&
-            loginDate.getFullYear() === today.getFullYear()
-          );
-        });
-
-        if (hasLoggedInToday) {
-          return handleError(res, 403, "Employees can only sign in once per day.");
-        }
-      }
 
       const token = jwt.sign({ id: adminUser._id }, process.env.SECRET, {
         expiresIn: "15d",
       });
       await UserToken.create({ token });
-
-      const currentTimestamp = {
-        login: new Date(),
-        logOut: null,
-      };
-      adminUser.timeSchedule.push(currentTimestamp);
 
       await adminUser.save();
 
@@ -192,7 +232,7 @@ async function getUserById(req, res) {
     const userId = req.params.id; // Use req.params.id to access user ID from URL parameter
 
     // Find the user by ID and select only the timeSchedule field
-    const user = await User.findById(userId).select("timeSchedule");
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.error({ message: "User not found", status: 404 });
@@ -215,7 +255,7 @@ async function getUserById(req, res) {
     };
 
     // Return the paginated timestamps with meta information
-    return res.success({ timestamps: paginatedTimestamps }, meta);
+    return res.success({ timestamps: paginatedTimestamps, name: user.full_name }, meta);
   } catch (err) {
     console.error("Error fetching user timestamps for user:", err); // Log error details for debugging
     return handleError(res, 500, "Server error");
@@ -374,6 +414,8 @@ module.exports = {
   getAllUsers,
   getUsers,
   inviteUser,
+  checkIn,
+  checkOut,
   authenticateAdmin,
   getUserById,
   updateUserById,

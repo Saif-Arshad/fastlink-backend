@@ -13,7 +13,7 @@ async function getUserHistory(req, res) {
         const limit = parseInt(req.query.limit) || 10;
         const userId = req.user.id;
 
-        const user = await User.findById(userId).select("timeSchedule");
+        const user = await User.findById(userId);
 
         if (!user) {
             return res.error({ message: "User not found", status: 404 });
@@ -33,7 +33,7 @@ async function getUserHistory(req, res) {
         };
 
         // Return the paginated timestamps with meta information
-        return res.success({ timestamps: paginatedTimestamps }, meta);
+        return res.success({ timestamps: paginatedTimestamps, name: user.full_name }, meta);
     } catch (err) {
         console.error("Error fetching user timestamps:", err); // Log error details for debugging
         return handleError(res, 500, "Server error");
