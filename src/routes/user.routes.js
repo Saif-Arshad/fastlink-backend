@@ -10,6 +10,7 @@ const {
   authenticateAdmin,
   updateUserById,
   inviteUser,
+  updateUserProfile,
   getUsers,
   checkOut,
   checkIn,
@@ -39,6 +40,7 @@ router.get("/:id", verifyUserToken, adminOnly, getUserById);
 
 // Update user by ID
 router.put("/:id", verifyUserToken, adminOnly, updateUserById);
+router.put("/update/:id", updateUserProfile);
 
 // Delete user by ID
 router.delete("/:id", verifyUserToken, adminOnly, deleteUserById);

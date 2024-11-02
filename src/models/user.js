@@ -26,6 +26,11 @@ const UserSchema = new mongoose.Schema(
       ref: "User",
       required: false,
     },
+    profileImage: {
+      type: String,
+      required: false,
+      default: "https://res.cloudinary.com/di6r722sv/image/upload/v1730553017/6596121_f1dn2l.png",
+    },
     type: {
       type: String,
       enum: ["admin", "employee"],

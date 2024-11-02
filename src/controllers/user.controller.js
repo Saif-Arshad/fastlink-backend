@@ -6,7 +6,8 @@ const nodemailer = require("nodemailer")
 const { User, UserToken } = require("../models/user");
 const { text } = require("express");
 dotenv.config();
-
+const cloudinary = require('../utils/Cloudnairy')
+const busboy = require('busboy');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -284,8 +285,42 @@ async function updateUserById(req, res) {
     return handleError(res, 500, err.message);
   }
 }
+const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { name, newPassword, profileImage } = req.body;
+    let updatedFields = {};
 
-// Delete User by ID
+    console.log(req.body)
+    if (name) {
+      updatedFields.full_name = name;
+    }
+
+    // Hash and update password if provided
+    if (newPassword) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+      updatedFields.password = hashedPassword;
+    }
+
+    // Update profile image URL if provided
+    if (profileImage) {
+      updatedFields.profileImage = profileImage;
+    }
+
+    // Update user in the database
+    const updatedUser = await User.findByIdAndUpdate(userId, updatedFields, { new: true });
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 async function deleteUserById(req, res) {
   try {
     const { id } = req.params;
@@ -415,6 +450,7 @@ module.exports = {
   getUsers,
   inviteUser,
   checkIn,
+  updateUserProfile,
   checkOut,
   authenticateAdmin,
   getUserById,
