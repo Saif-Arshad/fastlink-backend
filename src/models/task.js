@@ -4,7 +4,7 @@ const { mongoose } = require("../../config/database");
 const taskSchema = new mongoose.Schema({
     task: {
         type: String,
-        required: true
+        required: false
     },
     title: {
         type: String,
