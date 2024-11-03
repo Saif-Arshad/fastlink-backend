@@ -357,16 +357,16 @@ async function inviteUser(req, res) {
     const mailOptions = {
       from: process.env.MAIL_USER,
       to: email,
-      subject: 'Invitation to Register on the Dashboard',
+      subject: 'Invitation to Register on the Fast link',
       html: `
   <div style="font-family: Arial, sans-serif; color: #333; background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: 0 auto; border-radius: 8px;">
     
   
     
     <!-- Main Content -->
-    <h2 style="color: #5950A8;font-size:24px;">Welcome to the Dashboard!</h2>
+    <h2 style="color: #5950A8;font-size:24px;">Welcome to the Fast Link!</h2>
     <p>Hi </p>
-    <p>We're thrilled to have you on board. The Management Dashboard will help you streamline your projects, collaborate with your team, and achieve your goals more efficiently.</p>
+    <p>We're thrilled to have you on board. The Fast Link a Management Dashboard will help you streamline your projects, collaborate with your team, and achieve your goals more efficiently.</p>
     
     <p>To get started, please complete your registration by clicking the button below:</p>
     
@@ -380,11 +380,11 @@ async function inviteUser(req, res) {
     <p>If the button above doesn't work, please :</p>
     <p style="word-break: break-all;"><a href="${inviteLink}" style="color: #5950A8;">Click Here</a></p>
     
-    <p>If you have any questions or need assistance, feel free to reach out to our support team at <a href="mailto:support@yourcompany.com" style="color: #5950A8;">Saifarshad3344@gmail.com</a>.</p>
+    <p>If you have any questions or need assistance, feel free to reach out to our support team at <a href="mailto:lootah1999@gmail.com" style="color: #5950A8;">lootah1999@gmail.com</a>.</p>
     
     <!-- Closing -->
     <p>Thank you for joining us!</p>
-    <p>Best regards,<br>The Dashboard Team</p>
+    <p>Best regards,<br>The Fast Link Team</p>
     
     <!-- Footer -->
     <footer style="text-align: center; margin-top: 30px; font-size: 12px; color: #777;">
