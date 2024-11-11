@@ -15,10 +15,9 @@ exports.createTask = async (req, res) => {
             assignedBy,
             dueDate,
             title,
-            fileUrl,
             priority
         });
-
+        newTask.fileUrl.push(fileUrl)
         await newTask.save();
         res.status(201).json({ message: 'Task created successfully', task: newTask });
     } catch (error) {
